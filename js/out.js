@@ -9784,6 +9784,8 @@ var _reactDom2 = _interopRequireDefault(_reactDom);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -9799,13 +9801,43 @@ document.addEventListener('DOMContentLoaded', function () {
 
             var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
+            _this.pressedKeys = function (e, letter, i) {
+                var lettersCopy = _this.state.letters.slice();
+                var charCode = typeof e.which === "number" ? e.which : e.keyCode;
+                var char = String.fromCharCode(charCode);
+
+                lettersCopy.forEach(function (letter, i) {
+                    console.log('charCode: ' + char + ', letter:' + letter.value + ', validation: ' + letter.validation + ', lettersCopy[i].validation: ' + lettersCopy[i].validation + ', lettersCopy[i].value: ' + lettersCopy[i].value);
+                    if (char === letter.value) {
+                        lettersCopy[i].validation = true;
+                        _this.setState({
+                            letters: lettersCopy
+                        });
+                    } else {
+                        lettersCopy[i].validation = false;
+                        _this.setState({
+                            letters: lettersCopy
+                        });
+                    }
+                });
+            };
+
             _this.state = {
-                answer: ''
+                answer: '',
+                letters: [{
+                    value: '',
+                    validation: null
+                }]
             };
             return _this;
         }
 
         _createClass(App, [{
+            key: 'componentWillMount',
+            value: function componentWillMount() {
+                window.addEventListener("keypress", this.pressedKeys, false);
+            }
+        }, {
             key: 'componentDidMount',
             value: function componentDidMount() {
                 var _this2 = this;
@@ -9814,17 +9846,44 @@ document.addEventListener('DOMContentLoaded', function () {
                     return r.json();
                 }).then(function (data) {
                     console.log(data);
+                    var lettersArray = [].concat(_toConsumableArray(data.word)).map(function (letter) {
+                        return {
+                            value: letter,
+                            validation: null
+                        };
+                    });
                     _this2.setState({
-                        answer: data.word
+                        answer: data.word,
+                        letters: lettersArray
                     });
                 });
             }
         }, {
+            key: 'componentWillUnmount',
+            value: function componentWillUnmount() {
+                window.removeEventListener("keypress", this.pressedKeys, false);
+            }
+        }, {
             key: 'render',
             value: function render() {
+                var _this3 = this;
+
                 if (!this.state.answer) {
                     return null;
                 }
+
+                var answerInput = this.state.letters.map(function (letter, i) {
+                    return _react2.default.createElement(
+                        'div',
+                        { key: letter.value + i },
+                        _react2.default.createElement(
+                            'em',
+                            null,
+                            _this3.state.letters[i].validation === true ? letter.value : null
+                        )
+                    );
+                });
+
                 return _react2.default.createElement(
                     'div',
                     { className: 'container' },
@@ -9835,7 +9894,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     ),
                     _react2.default.createElement('div', { className: 'body' }),
                     _react2.default.createElement('div', { className: 'missed-letters' }),
-                    _react2.default.createElement('div', { className: 'answer' })
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'answer' },
+                        answerInput
+                    )
                 );
             }
         }]);
@@ -9843,7 +9906,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return App;
     }(_react2.default.Component);
 
-    var letters = "AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻ";
     _reactDom2.default.render(_react2.default.createElement(App, null), document.querySelector('#app'));
 });
 
