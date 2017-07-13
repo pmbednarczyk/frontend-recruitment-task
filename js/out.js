@@ -9794,23 +9794,48 @@ document.addEventListener('DOMContentLoaded', function () {
     var App = function (_React$Component) {
         _inherits(App, _React$Component);
 
-        function App() {
+        function App(props) {
             _classCallCheck(this, App);
 
-            return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+            var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+
+            _this.state = {
+                answer: ''
+            };
+            return _this;
         }
 
         _createClass(App, [{
+            key: 'componentDidMount',
+            value: function componentDidMount() {
+                var _this2 = this;
+
+                fetch('http://api.wordnik.com:80/v4/words.json/randomWord?hasDictionaryDef=false&minCorpusCount=0&maxCorpusCount=-1&minDictionaryCount=1&maxDictionaryCount=-1&minLength=5&maxLength=-1&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5').then(function (r) {
+                    return r.json();
+                }).then(function (data) {
+                    console.log(data);
+                    _this2.setState({
+                        answer: data.word
+                    });
+                });
+            }
+        }, {
             key: 'render',
             value: function render() {
+                if (!this.state.answer) {
+                    return null;
+                }
                 return _react2.default.createElement(
-                    'section',
-                    null,
+                    'div',
+                    { className: 'container' },
                     _react2.default.createElement(
                         'h1',
                         null,
-                        'Hello World'
-                    )
+                        this.state.answer
+                    ),
+                    _react2.default.createElement('div', { className: 'body' }),
+                    _react2.default.createElement('div', { className: 'missed-letters' }),
+                    _react2.default.createElement('div', { className: 'answer' })
                 );
             }
         }]);
@@ -9818,6 +9843,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return App;
     }(_react2.default.Component);
 
+    var letters = "AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻ";
     _reactDom2.default.render(_react2.default.createElement(App, null), document.querySelector('#app'));
 });
 

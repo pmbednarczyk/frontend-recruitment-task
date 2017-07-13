@@ -1,3 +1,13 @@
 body {
-  background: #fff;
+  background: #3b4163;
+}
+
+.container {
+  background-color: #f5f5f5;
+  background: linear-gradient(135deg, rgba(245,245,245,1) 0%, rgba(245,245,245,1) 74%, rgba(77,106,250,1) 74%, rgba(77,106,250,1) 100%);
+  position: relative;
+  min-height: 985px;
+  width: 100%;
+  max-width: 1620px;
+  border-radius: 5px;
 }
