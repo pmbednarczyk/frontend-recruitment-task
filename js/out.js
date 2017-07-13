@@ -9801,29 +9801,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
             var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
-            _this.pressedKeys = function (e, letter, i) {
+            _this.pressedKeys = function (e) {
                 var lettersCopy = _this.state.letters.slice();
                 var charCode = typeof e.which === "number" ? e.which : e.keyCode;
                 var char = String.fromCharCode(charCode);
 
                 lettersCopy.forEach(function (letter, i) {
-                    console.log('charCode: ' + char + ', letter:' + letter.value + ', validation: ' + letter.validation + ', lettersCopy[i].validation: ' + lettersCopy[i].validation + ', lettersCopy[i].value: ' + lettersCopy[i].value);
-                    if (char === letter.value) {
+                    if (char.toUpperCase() === letter.value.toUpperCase()) {
                         lettersCopy[i].validation = true;
-                        _this.setState({
-                            letters: lettersCopy
-                        });
-                    } else {
-                        lettersCopy[i].validation = false;
                         _this.setState({
                             letters: lettersCopy
                         });
                     }
                 });
+
+                var isWrongLetter = function isWrongLetter(letter) {
+                    return letter.value.toUpperCase() === char.toUpperCase();
+                };
+                if (!lettersCopy.some(isWrongLetter)) {
+                    _this.setState({
+                        wrongLetters: _this.state.wrongLetters + 1
+                    });
+                    console.log("ZLE! Po raz " + _this.state.wrongLetters);
+                }
             };
 
             _this.state = {
                 answer: '',
+                wrongLetters: 0,
                 letters: [{
                     value: '',
                     validation: null
@@ -9842,10 +9847,9 @@ document.addEventListener('DOMContentLoaded', function () {
             value: function componentDidMount() {
                 var _this2 = this;
 
-                fetch('http://api.wordnik.com:80/v4/words.json/randomWord?hasDictionaryDef=false&minCorpusCount=0&maxCorpusCount=-1&minDictionaryCount=1&maxDictionaryCount=-1&minLength=5&maxLength=-1&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5').then(function (r) {
+                fetch('http://api.wordnik.com:80/v4/words.json/randomWord?hasDictionaryDef=true&includePartOfSpeech=noun&minCorpusCount=0&maxCorpusCount=-1&minDictionaryCount=1&maxDictionaryCount=-1&minLength=8&maxLength=12&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5').then(function (r) {
                     return r.json();
                 }).then(function (data) {
-                    console.log(data);
                     var lettersArray = [].concat(_toConsumableArray(data.word)).map(function (letter) {
                         return {
                             value: letter,
@@ -9861,7 +9865,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }, {
             key: 'componentWillUnmount',
             value: function componentWillUnmount() {
-                window.removeEventListener("keypress", this.pressedKeys, false);
+                window.removeEventListener("keydown", this.pressedKeys, false);
             }
         }, {
             key: 'render',
@@ -9869,7 +9873,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 var _this3 = this;
 
                 if (!this.state.answer) {
-                    return null;
+                    return _react2.default.createElement(
+                        'h1',
+                        null,
+                        'Loading...'
+                    );
                 }
 
                 var answerInput = this.state.letters.map(function (letter, i) {

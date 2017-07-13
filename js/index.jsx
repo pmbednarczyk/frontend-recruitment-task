@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
             super(props);
             this.state = {
                 answer: '',
+                wrongLetters: 0,
                 letters: [
                     {
                         value: '',
@@ -17,26 +18,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
 
-        pressedKeys = (e, letter, i) => {
+        pressedKeys = (e) => {
             const lettersCopy = this.state.letters.slice();
             const charCode = (typeof e.which === "number") ? e.which : e.keyCode;
             const char = String.fromCharCode(charCode);
 
-
             lettersCopy.forEach((letter, i) => {
-                console.log(`charCode: ${char}, letter:${letter.value}, validation: ${letter.validation}, lettersCopy[i].validation: ${lettersCopy[i].validation}, lettersCopy[i].value: ${lettersCopy[i].value}`);
-                if (char === letter.value) {
+                if (char.toUpperCase() === letter.value.toUpperCase()) {
                     lettersCopy[i].validation = true;
-                    this.setState({
-                        letters: lettersCopy,
-                    });
-                } else {
-                    lettersCopy[i].validation = false;
                     this.setState({
                         letters: lettersCopy,
                     });
                 }
             });
+
+            const isWrongLetter = letter => {
+                return (letter.value.toUpperCase() === char.toUpperCase());
+            };
+            if (!lettersCopy.some(isWrongLetter)) {
+                this.setState({
+                    wrongLetters: this.state.wrongLetters + 1,
+                });
+                console.log("ZLE! Po raz " + this.state.wrongLetters);
+            }
         };
 
 
@@ -45,10 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         componentDidMount() {
-            fetch(`http://api.wordnik.com:80/v4/words.json/randomWord?hasDictionaryDef=false&minCorpusCount=0&maxCorpusCount=-1&minDictionaryCount=1&maxDictionaryCount=-1&minLength=5&maxLength=-1&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5`)
+            fetch(`http://api.wordnik.com:80/v4/words.json/randomWord?hasDictionaryDef=true&includePartOfSpeech=noun&minCorpusCount=0&maxCorpusCount=-1&minDictionaryCount=1&maxDictionaryCount=-1&minLength=8&maxLength=12&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5`)
                 .then(r => r.json())
                 .then(data => {
-                    console.log(data);
                     const lettersArray = [...data.word].map((letter) => {
                         return {
                             value: letter,
@@ -63,13 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         componentWillUnmount() {
-            window.removeEventListener("keypress", this.pressedKeys, false);
+            window.removeEventListener("keydown", this.pressedKeys, false);
         }
 
         render() {
 
             if (!this.state.answer) {
-                return null;
+                return <h1>Loading...</h1>;
             }
 
             const answerInput = this.state.letters.map((letter, i) => {
