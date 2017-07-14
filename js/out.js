@@ -9806,6 +9806,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 var charCode = typeof e.which === "number" ? e.which : e.keyCode;
                 var char = String.fromCharCode(charCode);
 
+                // If letter pressed is correct
                 lettersCopy.forEach(function (letter, i) {
                     if (char.toUpperCase() === letter.value.toUpperCase()) {
                         lettersCopy[i].validation = true;
@@ -9815,20 +9816,33 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
 
+                // If letter pressed is wrong
                 var isWrongLetter = function isWrongLetter(letter) {
                     return letter.value.toUpperCase() === char.toUpperCase();
                 };
                 if (!lettersCopy.some(isWrongLetter)) {
+                    _this.state.missedLetters.push(char.toUpperCase());
                     _this.setState({
-                        wrongLetters: _this.state.wrongLetters + 1
+                        wrongLettersCounter: _this.state.wrongLettersCounter + 1
                     });
-                    console.log("ZLE! Po raz " + _this.state.wrongLetters);
                 }
+            };
+
+            _this.getHangmanParts = function () {
+                var hangmanPart = [].concat(_toConsumableArray(_this.state.missedLetters)).map(function (letter, i) {
+                    console.log(i);
+                    return _react2.default.createElement('div', {
+                        key: letter + i,
+                        className: 'hangman__part' + (i + 1),
+                        style: { display: _this.state.wrongLettersCounter > i ? 'block' : 'none' } });
+                });
+                return hangmanPart;
             };
 
             _this.state = {
                 answer: '',
-                wrongLetters: 0,
+                wrongLettersCounter: 0,
+                missedLetters: [],
                 letters: [{
                     value: '',
                     validation: null
@@ -9837,11 +9851,23 @@ document.addEventListener('DOMContentLoaded', function () {
             return _this;
         }
 
+        // Core function responsible for pressing keys
+
+
+        // Generating hangman parts
+
+
         _createClass(App, [{
             key: 'componentWillMount',
+
+
+            //Attaching global event listener
             value: function componentWillMount() {
                 window.addEventListener("keypress", this.pressedKeys, false);
             }
+
+            //Fetching random word
+
         }, {
             key: 'componentDidMount',
             value: function componentDidMount() {
@@ -9862,6 +9888,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 });
             }
+
+            //Removing global event listener
+
         }, {
             key: 'componentWillUnmount',
             value: function componentWillUnmount() {
@@ -9872,6 +9901,7 @@ document.addEventListener('DOMContentLoaded', function () {
             value: function render() {
                 var _this3 = this;
 
+                // Show this if random word is not generated
                 if (!this.state.answer) {
                     return _react2.default.createElement(
                         'h1',
@@ -9880,10 +9910,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     );
                 }
 
+                // Creating empty board for letters, it gets filed if letter is correct
                 var answerInput = this.state.letters.map(function (letter, i) {
                     return _react2.default.createElement(
                         'div',
-                        { key: letter.value + i },
+                        { className: 'answer__single-letter', key: letter.value + i },
                         _react2.default.createElement(
                             'em',
                             null,
@@ -9892,20 +9923,55 @@ document.addEventListener('DOMContentLoaded', function () {
                     );
                 });
 
-                return _react2.default.createElement(
-                    'div',
-                    { className: 'container' },
-                    _react2.default.createElement(
-                        'h1',
-                        null,
-                        this.state.answer
-                    ),
-                    _react2.default.createElement('div', { className: 'body' }),
-                    _react2.default.createElement('div', { className: 'missed-letters' }),
+                return (
+                    // I was considering dividing it into components, but IMO there's no need.
                     _react2.default.createElement(
                         'div',
-                        { className: 'answer' },
-                        answerInput
+                        { className: 'container' },
+                        _react2.default.createElement(
+                            'h1',
+                            null,
+                            this.state.answer
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'hangman' },
+                            _react2.default.createElement('div', { className: 'hangman__bar' }),
+                            this.getHangmanParts()
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'missed-letters' },
+                            _react2.default.createElement(
+                                'h2',
+                                null,
+                                'You missed:'
+                            ),
+                            _react2.default.createElement(
+                                'span',
+                                null,
+                                this.state.missedLetters
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'answer' },
+                            answerInput
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'game-over', style: { display: this.state.wrongLettersCounter >= 11 ? "flex" : "none" } },
+                            _react2.default.createElement(
+                                'h3',
+                                null,
+                                'GAME OVER'
+                            ),
+                            _react2.default.createElement(
+                                'a',
+                                { href: '#' },
+                                'NEW WORD'
+                            )
+                        )
                     )
                 );
             }

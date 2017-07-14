@@ -1,10 +1,11 @@
 body {
   background: #3b4163;
+  font-family: Lato, 'Open sans', sans-serif;
 }
 
 .container {
   background-color: #f5f5f5;
-  background: linear-gradient(135deg, rgba(245,245,245,1) 0%, rgba(245,245,245,1) 74%, rgba(77,106,250,1) 74%, rgba(77,106,250,1) 100%);
+  background: linear-gradient(135deg, rgba(245, 245, 245, 1) 0%, rgba(245, 245, 245, 1) 74%, rgba(77, 106, 250, 1) 74%, rgba(77, 106, 250, 1) 100%);
   position: relative;
   min-height: 985px;
   width: 100%;
@@ -13,12 +14,204 @@ body {
 }
 
 .answer {
-  >div {
+  clear: both;
+  > .answer__single-letter {
     display: inline-block;
-    height: 20px;
-    background: #4d6afa;
+    height: 140px;
+    background: #53555d;
     margin: 0 2px;
-    width: 20px;
+    width: 8%;
     text-align: center;
+    color: #000000;
+    line-height: 140px;
+    font-size: 120px;
+    vertical-align: middle;
+    &:first-of-type, &:nth-of-type(2), &:nth-of-type(3), &:nth-of-type(4)  {
+      background: #e6e6e7;
+    }
   }
+}
+
+.hangman {
+  width: 40%;
+  min-width: 360px;
+  height: 650px;
+  float: left;
+  position: relative;
+  .hangman__bar {
+    position: absolute;
+    width: 241px;
+    height: 30px;
+    background: #53555d;
+    border-radius: 2px 10px 10px 2px;
+    top: 0;
+    left: 0;
+    &:after {
+      content: '';
+      width: 30px;
+      height: 43px;
+      position: absolute;
+      top: 30px;
+      left: 181px;
+      background: #53555d;
+    }
+  }
+  // Head
+  .hangman__part1 {
+    position: absolute;
+    width: 192px;
+    height: 212px;
+    background: url(../imgs/head.png);
+    top: 70px;
+    left: 102px;
+    z-index: 1;
+  }
+  // Neck
+  .hangman__part2 {
+    position: absolute;
+    width: 46px;
+    height: 67px;
+    background: #fece8a;
+    top: 258px;
+    left: 175px;
+  }
+  // Body
+  .hangman__part3 {
+    background: linear-gradient(to right, #8ac657 50%, #4ea06a 50%);
+    position: absolute;
+    width: 105px;
+    height: 165px;
+    border-radius: 10px 10px 3px 3px;
+    top: 298px;
+    left: 147px;
+    z-index: 1;
+    &:after {
+      content: '';
+      width: 105px;
+      height: 43px;
+      position: absolute;
+      bottom: 0;
+      background: #3c5a92;
+    }
+  }
+  //Left arm
+  .hangman__part4 {
+    background: #8ac657;
+    width: 46px;
+    height: 139px;
+    border-radius: 10px;
+    top: 295px;
+    left: 99px;
+    position: absolute;
+    transform: rotate(43deg);
+    z-index: 1;
+  }
+  // Right arm
+  .hangman__part5 {
+    background: #4ea06a;
+    position: absolute;
+    width: 46px;
+    height: 139px;
+    border-radius: 10px;
+    top: 295px;
+    left: 253px;
+    transform: rotate(-43deg);
+    z-index: 1;
+  }
+  //Left hand
+  .hangman__part6 {
+    background: #fece8a;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    top: 402px;
+    left: 311px;
+    position: absolute;
+  }
+  //Right hand
+  .hangman__part7 {
+    background: #fece8a;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    top: 402px;
+    left: 57px;
+    position: absolute;
+  }
+  //Left leg
+  .hangman__part8 {
+    background: #3c5a92;
+    border-radius: 10px;
+    width: 49px;
+    height: 175px;
+    top: 445px;
+    left: 219px;
+    position: absolute;
+    transform: rotate(-12deg);
+    z-index: 1;
+  }
+  //Right leg
+  .hangman__part9 {
+    background: #3c5a92;
+    border-radius: 10px;
+    width: 49px;
+    height: 175px;
+    top: 445px;
+    left: 130px;
+    position: absolute;
+    transform: rotate(12deg);
+    z-index: 1;
+  }
+  // Left foot
+  .hangman__part10 {
+    background: #fece8a;
+    border-radius: 15px;
+    width: 81px;
+    height: 29px;
+    top: 606px;
+    left: 241px;
+    position: absolute;
+    transform: rotate(-8deg);
+  }
+  //Right foot
+  .hangman__part11 {
+    background: #fece8a;
+    border-radius: 15px;
+    width: 81px;
+    height: 29px;
+    top: 606px;
+    left: 79px;
+    position: absolute;
+    transform: rotate(8deg);
+  }
+}
+
+.missed-letters {
+  width: 60%;
+  float: right;
+  text-align: left;
+  font-size: 32px;
+  color: #53555d;
+  margin: 0;
+  text-transform: uppercase;
+  >span {
+    font-size: 92px;
+    color: #4d69fa;
+    font-weight: bold;
+    letter-spacing: 9px;
+  }
+}
+
+
+.game-over {
+  background: rgba(83, 85, 93, 0.74);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 3;
 }
