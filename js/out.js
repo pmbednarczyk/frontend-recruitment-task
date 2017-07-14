@@ -9839,6 +9839,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 return hangmanPart;
             };
 
+            _this.handleNewWordClick = function () {
+                fetch('http://api.wordnik.com:80/v4/words.json/randomWord?hasDictionaryDef=true&includePartOfSpeech=noun&minCorpusCount=0&maxCorpusCount=-1&minDictionaryCount=1&maxDictionaryCount=-1&minLength=8&maxLength=12&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5').then(function (r) {
+                    return r.json();
+                }).then(function (data) {
+                    var lettersArray = [].concat(_toConsumableArray(data.word)).map(function (letter) {
+                        return {
+                            value: letter,
+                            validation: null
+                        };
+                    });
+                    _this.setState({
+                        answer: data.word,
+                        wrongLettersCounter: 0,
+                        missedLetters: [],
+                        letters: lettersArray
+                    });
+                });
+            };
+
             _this.state = {
                 answer: '',
                 wrongLettersCounter: 0,
@@ -9857,6 +9876,9 @@ document.addEventListener('DOMContentLoaded', function () {
         // Generating hangman parts
 
 
+        // Generating new word after game is over (I believe it could be done in an easier way).
+
+
         _createClass(App, [{
             key: 'componentWillMount',
 
@@ -9873,7 +9895,7 @@ document.addEventListener('DOMContentLoaded', function () {
             value: function componentDidMount() {
                 var _this2 = this;
 
-                fetch('http://api.wordnik.com:80/v4/words.json/randomWord?hasDictionaryDef=true&includePartOfSpeech=noun&minCorpusCount=0&maxCorpusCount=-1&minDictionaryCount=1&maxDictionaryCount=-1&minLength=8&maxLength=12&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5').then(function (r) {
+                fetch('http://api.wordnik.com:80/v4/words.json/randomWord?hasDictionaryDef=true&includePartOfSpeech=noun&minCorpusCount=0&maxCorpusCount=-1&minDictionaryCount=1&maxDictionaryCount=-1&minLength=8&maxLength=10&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5').then(function (r) {
                     return r.json();
                 }).then(function (data) {
                     var lettersArray = [].concat(_toConsumableArray(data.word)).map(function (letter) {
@@ -9929,11 +9951,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         'div',
                         { className: 'container' },
                         _react2.default.createElement(
-                            'h1',
-                            null,
-                            this.state.answer
-                        ),
-                        _react2.default.createElement(
                             'div',
                             { className: 'hangman' },
                             _react2.default.createElement('div', { className: 'hangman__bar' }),
@@ -9944,12 +9961,12 @@ document.addEventListener('DOMContentLoaded', function () {
                             { className: 'missed-letters' },
                             _react2.default.createElement(
                                 'h2',
-                                null,
+                                { className: 'missed-letters__header' },
                                 'You missed:'
                             ),
                             _react2.default.createElement(
                                 'span',
-                                null,
+                                { className: 'missed-letters__single-letters' },
                                 this.state.missedLetters
                             )
                         ),
@@ -9960,15 +9977,16 @@ document.addEventListener('DOMContentLoaded', function () {
                         ),
                         _react2.default.createElement(
                             'div',
-                            { className: 'game-over', style: { display: this.state.wrongLettersCounter >= 11 ? "flex" : "none" } },
+                            { className: 'game-over',
+                                style: { display: this.state.wrongLettersCounter >= 11 ? "flex" : "none" } },
                             _react2.default.createElement(
                                 'h3',
-                                null,
+                                { className: 'game-over__header' },
                                 'GAME OVER'
                             ),
                             _react2.default.createElement(
-                                'a',
-                                { href: '#' },
+                                'span',
+                                { className: 'game-over__button', onClick: this.handleNewWordClick },
                                 'NEW WORD'
                             )
                         )

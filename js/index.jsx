@@ -59,6 +59,26 @@ document.addEventListener('DOMContentLoaded', () => {
             return hangmanPart
         };
 
+        // Generating new word after game is over (I believe it could be done in an easier way).
+        handleNewWordClick = () => {
+            fetch(`http://api.wordnik.com:80/v4/words.json/randomWord?hasDictionaryDef=true&includePartOfSpeech=noun&minCorpusCount=0&maxCorpusCount=-1&minDictionaryCount=1&maxDictionaryCount=-1&minLength=8&maxLength=12&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5`)
+                .then(r => r.json())
+                .then(data => {
+                    const lettersArray = [...data.word].map((letter) => {
+                        return {
+                            value: letter,
+                            validation: null,
+                        }
+                    });
+                    this.setState({
+                        answer: data.word,
+                        wrongLettersCounter: 0,
+                        missedLetters: [],
+                        letters: lettersArray,
+                    });
+                });
+        };
+
         //Attaching global event listener
         componentWillMount() {
             window.addEventListener("keypress", this.pressedKeys, false);
@@ -66,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         //Fetching random word
         componentDidMount() {
-            fetch(`http://api.wordnik.com:80/v4/words.json/randomWord?hasDictionaryDef=true&includePartOfSpeech=noun&minCorpusCount=0&maxCorpusCount=-1&minDictionaryCount=1&maxDictionaryCount=-1&minLength=8&maxLength=12&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5`)
+            fetch(`http://api.wordnik.com:80/v4/words.json/randomWord?hasDictionaryDef=true&includePartOfSpeech=noun&minCorpusCount=0&maxCorpusCount=-1&minDictionaryCount=1&maxDictionaryCount=-1&minLength=8&maxLength=10&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5`)
                 .then(r => r.json())
                 .then(data => {
                     const lettersArray = [...data.word].map((letter) => {
@@ -103,18 +123,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return (
                 // I was considering dividing it into components, but IMO there's no need.
                 <div className="container">
-                    <h1>{this.state.answer}</h1>
                     <div className="hangman">
                         <div className="hangman__bar"></div>
                         {this.getHangmanParts()}
                     </div>
-                    <div className="missed-letters"><h2>You missed:</h2>
-                        <span>{this.state.missedLetters}</span>
+                    <div className="missed-letters">
+                        <h2 className="missed-letters__header">You missed:</h2>
+                        <span className="missed-letters__single-letters">{this.state.missedLetters}</span>
                     </div>
                     <div className="answer">{answerInput}</div>
-                    <div className="game-over" style={{display: this.state.wrongLettersCounter >= 11 ? "flex" : "none"}}>
-                        <h3>GAME OVER</h3>
-                        <a href="#">NEW WORD</a>
+                    <div className="game-over"
+                         style={{display: this.state.wrongLettersCounter >= 11 ? "flex" : "none"}}>
+                        <h3 className="game-over__header">GAME OVER</h3>
+                        <span className="game-over__button" onClick={this.handleNewWordClick}>NEW WORD</span>
                     </div>
                 </div>
             )

@@ -1,6 +1,22 @@
+// Fonts
+@font-face {
+  font-family: 'aller_displayregular';
+  src: url('../fonts/allerdisplay-webfont.woff2') format('woff2'),
+  url('../fonts/allerdisplay-webfont.woff') format('woff'),
+  url('../fonts/AllerDisplay.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+// Variables
+$darkblue: #53555d;
+$phone: 460px;
+$tablet: 985px;
+$desktop: 1200px;
+
+
 body {
   background: #3b4163;
-  font-family: Lato, 'Open sans', sans-serif;
+  font-family: 'aller_displayregular', Lato, 'Open sans', sans-serif;
 }
 
 .container {
@@ -11,30 +27,44 @@ body {
   width: 100%;
   max-width: 1620px;
   border-radius: 5px;
+  padding: 40px 0;
+  overflow: hidden;
 }
 
 .answer {
-  clear: both;
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  margin: 0 auto;
   > .answer__single-letter {
     display: inline-block;
     height: 140px;
-    background: #53555d;
-    margin: 0 2px;
-    width: 8%;
+    background: $darkblue;
+    margin: 0 .66%;
+    width: 125px;
+    //min-width: 7%;
     text-align: center;
-    color: #000000;
+    color: #ffffff;
     line-height: 140px;
     font-size: 120px;
     vertical-align: middle;
+    border-radius: 10px;
     &:first-of-type, &:nth-of-type(2), &:nth-of-type(3), &:nth-of-type(4)  {
       background: #e6e6e7;
+      color: $darkblue;
+    }
+    &:first-of-type {
+      margin-left: 0;
+    }
+    &:last-of-type {
+      margin-right: 0;
     }
   }
 }
 
 .hangman {
   width: 40%;
-  min-width: 360px;
+  min-width: 300px;
   height: 650px;
   float: left;
   position: relative;
@@ -42,7 +72,7 @@ body {
     position: absolute;
     width: 241px;
     height: 30px;
-    background: #53555d;
+    background: $darkblue;
     border-radius: 2px 10px 10px 2px;
     top: 0;
     left: 0;
@@ -53,7 +83,7 @@ body {
       position: absolute;
       top: 30px;
       left: 181px;
-      background: #53555d;
+      background: $darkblue;
     }
   }
   // Head
@@ -190,15 +220,20 @@ body {
   width: 60%;
   float: right;
   text-align: left;
-  font-size: 32px;
-  color: #53555d;
   margin: 0;
   text-transform: uppercase;
-  >span {
+  .missed-letters__header {
+    font-size: 32px;
+    color: $darkblue;
+  }
+  .missed-letters__single-letters {
     font-size: 92px;
     color: #4d69fa;
-    font-weight: bold;
     letter-spacing: 9px;
+    @media (max-width: $tablet) {
+      font-size: 50px;
+      letter-spacing: 6px;
+    }
   }
 }
 
@@ -214,4 +249,21 @@ body {
   flex-direction: column;
   justify-content: center;
   z-index: 3;
+  .game-over__header {
+    font-size: 92px;
+    color: #fff;
+    margin-bottom: 42px;
+  }
+  .game-over__button {
+    color: #ffba00;
+    padding: 15px 30px;
+    border: 3px dashed;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    &:hover {
+      color: #fff;
+    }
+  }
 }
+
