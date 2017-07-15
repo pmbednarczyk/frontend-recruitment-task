@@ -34,11 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // If letter pressed is wrong
+            // If letter is wrong
             const isWrongLetter = letter => {
                 return (letter.value.toUpperCase() === char.toUpperCase());
             };
-            if (!lettersCopy.some(isWrongLetter)) {
+            if (!lettersCopy.some(isWrongLetter) && this.state.wrongLettersCounter < 11) {
                 this.state.missedLetters.push(char.toUpperCase());
                 this.setState({
                     wrongLettersCounter: this.state.wrongLettersCounter + 1,
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         render() {
             // Show this if random word is not generated
             if (!this.state.answer) {
-                return <h1>Loading...</h1>;
+                return <h1 className="loading">Loading...</h1>;
             }
 
             // Creating empty board for letters, it gets filed if letter is correct
@@ -123,15 +123,16 @@ document.addEventListener('DOMContentLoaded', () => {
             return (
                 // I was considering dividing it into components, but IMO there's no need.
                 <div className="container">
-                    <div className="hangman">
-                        <div className="hangman__bar"></div>
-                        {this.getHangmanParts()}
-                    </div>
+                    <div className="answer small">{answerInput}</div>
                     <div className="missed-letters">
                         <h2 className="missed-letters__header">You missed:</h2>
                         <span className="missed-letters__single-letters">{this.state.missedLetters}</span>
                     </div>
-                    <div className="answer">{answerInput}</div>
+                    <div className="hangman__bar"></div>
+                    <div className={`hangman ${this.state.wrongLettersCounter >= 11 ? "hangman-swing" : ''}`}>
+                        {this.getHangmanParts()}
+                    </div>
+                    <div className="answer desktop">{answerInput}</div>
                     <div className="game-over"
                          style={{display: this.state.wrongLettersCounter >= 11 ? "flex" : "none"}}>
                         <h3 className="game-over__header">GAME OVER</h3>

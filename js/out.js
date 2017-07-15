@@ -9816,11 +9816,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
 
-                // If letter pressed is wrong
+                // If letter is wrong
                 var isWrongLetter = function isWrongLetter(letter) {
                     return letter.value.toUpperCase() === char.toUpperCase();
                 };
-                if (!lettersCopy.some(isWrongLetter)) {
+                if (!lettersCopy.some(isWrongLetter) && _this.state.wrongLettersCounter < 11) {
                     _this.state.missedLetters.push(char.toUpperCase());
                     _this.setState({
                         wrongLettersCounter: _this.state.wrongLettersCounter + 1
@@ -9927,7 +9927,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (!this.state.answer) {
                     return _react2.default.createElement(
                         'h1',
-                        null,
+                        { className: 'loading' },
                         'Loading...'
                     );
                 }
@@ -9952,9 +9952,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         { className: 'container' },
                         _react2.default.createElement(
                             'div',
-                            { className: 'hangman' },
-                            _react2.default.createElement('div', { className: 'hangman__bar' }),
-                            this.getHangmanParts()
+                            { className: 'answer small' },
+                            answerInput
                         ),
                         _react2.default.createElement(
                             'div',
@@ -9970,9 +9969,15 @@ document.addEventListener('DOMContentLoaded', function () {
                                 this.state.missedLetters
                             )
                         ),
+                        _react2.default.createElement('div', { className: 'hangman__bar' }),
                         _react2.default.createElement(
                             'div',
-                            { className: 'answer' },
+                            { className: 'hangman ' + (this.state.wrongLettersCounter >= 11 ? "hangman-swing" : '') },
+                            this.getHangmanParts()
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'answer desktop' },
                             answerInput
                         ),
                         _react2.default.createElement(
