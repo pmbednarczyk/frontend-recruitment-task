@@ -29,6 +29,7 @@ body {
   border-radius: 5px;
   padding: 40px 0;
   overflow: hidden;
+  margin: 0 auto;
 }
 
 .answer {
@@ -301,7 +302,7 @@ body {
     }
   }
 }
-
+//Game over screen
 .game-over {
   background: rgba(83, 85, 93, 0.74);
   position: fixed;
